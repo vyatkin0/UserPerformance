@@ -26,9 +26,9 @@ import { WithStyles, withStyles } from '@material-ui/core/styles';
 import AppAlert from './AppAlert'
 import { ApplicationState } from '../store';
 import Paper from '@material-ui/core/Paper';
+import PeriodSelect from './PeriodSelect';
 import { connect } from 'react-redux';
 import styles from '../styles';
-import PeriodSelect from './PeriodSelect';
 
 type PerformanceProps =  PerformanceStore.PerformanceState
  & WithStyles<typeof styles>
@@ -77,7 +77,7 @@ class Performance extends React.PureComponent<PerformanceProps> {
     private currentPopper = {id: undefined, open:false, anchorEl: null, activityId:undefined, dayIndex:undefined};
 
     private confirmExit = (e) => {
-        if(Object.keys(PerformanceStore.changes).length>0){
+        if(Object.keys(this.props.changes).length>0){
             // Cancel the event
             e.preventDefault(); // If you prevent default behavior in Mozilla Firefox prompt will always be shown
 
@@ -327,7 +327,7 @@ class Performance extends React.PureComponent<PerformanceProps> {
     private renderFooterPortal = () => {
         const { classes } = this.props;
         
-        const saveBtnDisabled = !(Object.keys(PerformanceStore.changes).length>0);
+        const saveBtnDisabled = !(Object.keys(this.props.changes).length>0);
 
         return ReactDOM.createPortal(<div className={classes.divButtons}>
             <Button variant='contained' color='secondary' disabled={saveBtnDisabled} onClick={this.props.sendPerformance}>
@@ -397,12 +397,12 @@ class Performance extends React.PureComponent<PerformanceProps> {
     }
 
     isValueChanged(day, activityId) :boolean {
-        if (Object.keys(PerformanceStore.changes).length<1) {
+        if (Object.keys(this.props.changes).length<1) {
             return false;
         }
 
-        return PerformanceStore.changes[day]
-            && PerformanceStore.changes[day][activityId];
+        return this.props.changes[day]
+            && this.props.changes[day][activityId];
     }
     
     public render() {

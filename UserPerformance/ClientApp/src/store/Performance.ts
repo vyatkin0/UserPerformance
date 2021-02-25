@@ -11,11 +11,6 @@ import {InfoMessage} from '../components/AppAlert'
 import configApi from '../configApi'
 
 /**
- * Container object of current changes made by user
- */
-export let changes = {};
-
-/**
  * Rest API request identifier
  */
 let messageId: number = 0;
@@ -33,6 +28,7 @@ export interface PerformanceState {
     from: Date; // Start date of displayed period of time
     to: Date; // End date of displayed period of time
     performance:UserPerformance; // Current performance
+    changes: any; // Container object of current changes made by user
 }
 interface UserPerformance {
     days: ActivityDay[];
@@ -168,9 +164,11 @@ export const actionCreators = {
      */
     sendPerformance: (): AppThunkAction<KnownAction> => (dispatch, getState) => {
         // Only load data if it's something we don't already have (and are not already loading)
-        //const appState = getState();
+        const appState = getState();
 
         const data = [];
+
+        const {changes} = appState.performance;
 
         Object.keys(changes).forEach( day => {
             Object.keys(changes[day]).forEach( id => {
@@ -227,50 +225,41 @@ export const actionCreators = {
     },
 };
 
+export function emptyState() : PerformanceState {
+    const now = new Date();
+    const from = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    //const _nextDay = () => { from.setDate(from.getDate()+1); return new Date(from)};
 
-const now = new Date();
-const from = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-//const _nextDay = () => { from.setDate(from.getDate()+1); return new Date(from)};
-
-const unloadedState: PerformanceState = 
-{
-    from: from,
-    to: from, // empty period on startup
-    isLoading: false,
-    isUploading: false,
-    messages:[],
-    performance: {
-	days: [{
-			date: from,
-			dayType: 1,
-			hours: '0'
-		}],
-	currentDay: -1,
-	monthWorkDays: 0,
-	monthPerformance: 0,
-    userActivities: [],
-    groupedActivities: {},
-	userName: '',
-    editedDays: 5,
-    minYear:from.getFullYear(),
-    maxYear:from.getFullYear(),
-}};
-
-export function emptyState() {
     return {
-        ...unloadedState,
-        messages: [],
+        from: from,
+        to: from, // empty period on startup
+        isLoading: false,
+        isUploading: false,
+        messages:[],
         changes: {},
         performance: {
-            ...unloadedState.performance,
-            days: [...unloadedState.performance.days],
-            employeeActivities: [],
+            days: [{
+                    date: from,
+                    dayType: 1,
+                    hours: '0'
+                }],
+            currentDay: -1,
+            monthWorkDays: 0,
+            monthPerformance: 0,
+            userActivities: [],
+            groupedActivities: {},
+            userName: '',
+            editedDays: 5,
+            minYear:from.getFullYear(),
+            maxYear:from.getFullYear(),
         },
     };
 }
 
-function addChange(day, activity, count) {
+export function addChange(state : PerformanceState, day, activity, count) {
     const dateKey = day.date.valueOf();
+    const {changes} = state;
+
     if(!changes[dateKey]) {
         changes[dateKey] = {};
     }
@@ -301,7 +290,7 @@ function _updateActivityCount(state: PerformanceState | undefined, incomingActio
                 const str = n.toString();
                 if(state.performance.days[incomingAction.dayIndex].hours !== str) {
                     
-                    addChange(state.performance.days[incomingAction.dayIndex], null, str);
+                    addChange(state, state.performance.days[incomingAction.dayIndex], null, str);
 
                     state.performance.days[incomingAction.dayIndex].hours = str;
                 }
@@ -312,7 +301,7 @@ function _updateActivityCount(state: PerformanceState | undefined, incomingActio
                 if(allowedChars.includes(trimmed) 
                     && state.performance.days[incomingAction.dayIndex].hours !== trimmed) {
 
-                    addChange(state.performance.days[incomingAction.dayIndex], null, trimmed);
+                    addChange(state, state.performance.days[incomingAction.dayIndex], null, trimmed);
 
                     state.performance.days[incomingAction.dayIndex].hours = trimmed;
                 }
@@ -326,7 +315,7 @@ function _updateActivityCount(state: PerformanceState | undefined, incomingActio
             const n = Number(incomingAction.count.replace(',','.'));
             if(isFinite(n) && activity.counts[incomingAction.dayIndex] !== n ) {
 
-                addChange(state.performance.days[incomingAction.dayIndex], activity.activity, n);
+                addChange(state, state.performance.days[incomingAction.dayIndex], activity.activity, n);
                 
                 activity.counts[incomingAction.dayIndex] = n;
             }
@@ -334,8 +323,12 @@ function _updateActivityCount(state: PerformanceState | undefined, incomingActio
     }
 }
 
-function applyPerformanceChanges(p : UserPerformance) {
-    
+/**
+ * Applies user changes to received from backend data
+ * @param changes - Array of user changes
+ * @param p - Received performance data
+ */
+export function applyPerformanceChanges(changes: Object, p : UserPerformance) {
     if(Object.keys(changes).length<1) return;
     
     p.days.forEach((d, index) => {
@@ -406,11 +399,10 @@ export const reducer: Reducer<PerformanceState> = (state: PerformanceState | und
                 text: 'Uploaded successfully',
                 id: action.requestId,
             }];
-
-            changes = {};
             
             return {
                 ...state,
+                changes: {},
                 isUploading: false,
             };
 
@@ -432,7 +424,7 @@ export const reducer: Reducer<PerformanceState> = (state: PerformanceState | und
             if (action.from === state.from && action.to === state.to) {
 
                 action.performance.days = action.performance.days.map(d => ({...d, date:new Date(d.date)}));
-                applyPerformanceChanges(action.performance);
+                applyPerformanceChanges(state, action.performance);
 
                 const newState = {
                     ...state,
