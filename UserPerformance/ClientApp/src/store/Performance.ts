@@ -45,7 +45,7 @@ interface UserPerformance {
 
 interface ActivityDay
 {
-    date: Date;
+    day: Date;
     dayType: number;
     hours: string;
 }
@@ -239,7 +239,7 @@ export function emptyState() : PerformanceState {
         changes: {},
         performance: {
             days: [{
-                    date: from,
+                    day: from,
                     dayType: 1,
                     hours: '0'
                 }],
@@ -332,7 +332,7 @@ export function applyPerformanceChanges(changes: Object, p : UserPerformance) {
     if(Object.keys(changes).length<1) return;
     
     p.days.forEach((d, index) => {
-        const dateKey = d.date.valueOf();
+        const dateKey = d.day.valueOf();
         if(!changes[dateKey]) {
             return;
         }
@@ -423,7 +423,7 @@ export const reducer: Reducer<PerformanceState> = (state: PerformanceState | und
             // handle out-of-order responses.
             if (action.from === state.from && action.to === state.to) {
 
-                action.performance.days = action.performance.days.map(d => ({...d, date:new Date(d.date)}));
+                action.performance.days = action.performance.days.map(d => ({...d, date:new Date(d.day)}));
                 applyPerformanceChanges(state, action.performance);
 
                 const newState = {

@@ -254,8 +254,8 @@ namespace UnitTestProject
             Assert.AreEqual(ea.CurrentDay, days);
             Assert.AreEqual(ea.EditedDays, days + 1);
             Assert.AreEqual(ea.Days.Length, 2);
-            Assert.AreEqual(ea.Days[0].Date, startDate);
-            Assert.AreEqual(ea.Days[1].Date, new DateTime(2020, 1, 2));
+            Assert.AreEqual(ea.Days[0].day, startDate);
+            Assert.AreEqual(ea.Days[1].day, new DateTime(2020, 1, 2));
             Assert.AreEqual(ea.MaxYear, DateTime.Now.Date.Year + 1);
             Assert.AreEqual(ea.MinYear, 2020);
             Assert.AreEqual(ea.MonthPerformance, 0);

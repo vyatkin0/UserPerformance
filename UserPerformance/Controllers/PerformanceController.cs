@@ -424,7 +424,7 @@ namespace UserPerformanceApp.Controllers
 
                 model.Days[i] = new ActivityDayModel
                 {
-                    Date = activityDay,
+                    day = activityDay,
                     DayType = dayType,
                     Hours = workHours
                 };

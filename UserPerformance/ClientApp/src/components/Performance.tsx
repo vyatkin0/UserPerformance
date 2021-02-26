@@ -269,7 +269,7 @@ class Performance extends React.PureComponent<PerformanceProps> {
                     <TableCell align='left'>Name</TableCell>
                     <TableCell className={classes.monthHeadCell} align='center'></TableCell>
                     {performance.days.map((day,index) =>
-                        <TableCell key={'month:'+ index} className={classes.numCell} align='center'>{`${day.date.getDate()}.${day.date.getMonth()+1}`}</TableCell>)}
+                        <TableCell key={'month:'+ index} className={classes.numCell} align='center'>{`${day.day.getDate()}.${day.day.getMonth()+1}`}</TableCell>)}
                 </TableRow>
                 </TableHead>
                 <TableBody>
@@ -308,7 +308,7 @@ class Performance extends React.PureComponent<PerformanceProps> {
                     {performance.days.map((d, index)=> {
                         let className = index<=performance.currentDay && index+performance.editedDays>performance.currentDay ? classes.cellSpan + ' ' + classes.cellSpanCurrent : classes.cellSpan;
 
-                        if(this.isValueChanged(d.date.valueOf(), 0)) {
+                        if(this.isValueChanged(d.day.valueOf(), 0)) {
                             className += ' ' + classes.changedValue;
                         }
 
@@ -369,7 +369,7 @@ class Performance extends React.PureComponent<PerformanceProps> {
                                 <TableCell className={classes.monthHeadCell} align='center'>Spent time</TableCell>
                                 <TableCell className={classes.monthHeadCell} align='center'>Count per month</TableCell>
                                 {performance.days.map((day, index) =>
-                                    <TableCell key={key + ':' + index} className={classes.numCell} align='center'>{`${day.date.getDate()}.${day.date.getMonth() + 1}`}</TableCell>)}
+                                    <TableCell key={key + ':' + index} className={classes.numCell} align='center'>{`${day.day.getDate()}.${day.day.getMonth() + 1}`}</TableCell>)}
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -380,7 +380,7 @@ class Performance extends React.PureComponent<PerformanceProps> {
                                 {performance.days.map((d, index) => {
                                     let className = index <= performance.currentDay && index + performance.editedDays > performance.currentDay ? classes.cellSpan + ' ' + classes.cellSpanCurrent : classes.cellSpan;
 
-                                    if (this.isValueChanged(d.date.valueOf(), ua.activity.id)) {
+                                    if (this.isValueChanged(d.day.valueOf(), ua.activity.id)) {
                                         className += ' ' + classes.changedValue;
                                     }
 
