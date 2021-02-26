@@ -11,6 +11,20 @@ using System.Text.Json.Serialization;
 
 namespace UserPerformanceApp.Infrastructure
 {
+    public class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
+    {
+        public AppDbContext CreateDbContext(string[] args)
+        {
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+
+            IConfigurationRoot configuration = builder.Build();
+
+            return new AppDbContext(configuration);
+        }
+    }
+
     /// <summary>
     /// Entity framework classes for database entities
     /// </summary>

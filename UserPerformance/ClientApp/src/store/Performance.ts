@@ -256,8 +256,8 @@ export function emptyState() : PerformanceState {
     };
 }
 
-export function addChange(state : PerformanceState, day, activity, count) {
-    const dateKey = day.date.valueOf();
+export function addChange(state : PerformanceState, day: ActivityDay, activity: Activity, count: string|number) {
+    const dateKey = day.day.valueOf();
     const {changes} = state;
 
     if(!changes[dateKey]) {
@@ -423,7 +423,7 @@ export const reducer: Reducer<PerformanceState> = (state: PerformanceState | und
             // handle out-of-order responses.
             if (action.from === state.from && action.to === state.to) {
 
-                action.performance.days = action.performance.days.map(d => ({...d, date:new Date(d.day)}));
+                action.performance.days = action.performance.days.map(d => ({...d, day:new Date(d.day)}));
                 applyPerformanceChanges(state, action.performance);
 
                 const newState = {

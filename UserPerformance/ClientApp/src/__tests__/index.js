@@ -8,7 +8,7 @@ describe('Performance store functions', () => {
     test('addChange works correctly', () => {
         const state = { changes: {} };
 
-        const day1 = { date: new Date(1) };
+        const day1 = { day: new Date(1) };
         const activity = { id: 1 };
         const count = 'V';
         Performance.addChange(state, day1, activity, count);
@@ -28,7 +28,7 @@ describe('Performance store functions', () => {
 
         expect(state).toEqual(result);
 
-        const day2 = { date: new Date(2) };
+        const day2 = { day: new Date(2) };
         const count4 = 4;
         Performance.addChange(state, day2, activity, count4);
 
@@ -62,7 +62,7 @@ describe('Performance store functions', () => {
 
 
         const up = {
-            days:[{date:new Date(1), hours: 8}, {date:new Date(2), hours: 8}, {date:new Date(3), hours: 8}],
+            days:[{day:new Date(1), hours: 8}, {day:new Date(2), hours: 8}, {day:new Date(3), hours: 8}],
             userActivities:userActivities,
         }
 

@@ -8,10 +8,7 @@ import * as ReactDOM from 'react-dom'
 
 import {
     Button,
-    Link,
-    MenuItem,
     Popover,
-    Select,
     Table,
     TableBody,
     TableCell,
@@ -20,7 +17,6 @@ import {
     TableRow,
     TextField
 } from '@material-ui/core';
-import {ChevronLeftRounded, ChevronRightRounded} from '@material-ui/icons';
 import { WithStyles, withStyles } from '@material-ui/core/styles';
 
 import AppAlert from './AppAlert'
@@ -74,7 +70,13 @@ class Performance extends React.PureComponent<PerformanceProps> {
 
     private countsInputRef;
 
-    private currentPopper = {id: undefined, open:false, anchorEl: null, activityId:undefined, dayIndex:undefined};
+    private currentPopper = {
+        open:false,
+        anchorEl: null,
+        activityId:undefined,
+        dayIndex:undefined,
+        countsHelper:'',
+    };
 
     private confirmExit = (e) => {
         if(Object.keys(this.props.changes).length>0){
@@ -102,57 +104,85 @@ class Performance extends React.PureComponent<PerformanceProps> {
         }
 
         this.currentPopper = {
-            id: 'simple-popper',
             open: true,
             anchorEl: event.currentTarget,
             activityId,
             dayIndex,
+            countsHelper:'',
         };
 
         this.forceUpdate();
     };
 
-    private handleClose = (update: boolean) => {
+    private handleClose = (event, update: boolean) => {
+        event.preventDefault();
+
         const {activityId, dayIndex} = this.currentPopper;
         
         if ( typeof activityId === 'undefined'
             || activityId === null) return;
 
-        this.currentPopper = {
-            id: undefined,
-            open: false,
-            anchorEl: null,
-            activityId:undefined,
-            dayIndex:undefined
-        };
-
         if(update) {
+            if(0 === activityId) {
+                update = this.props.performance.days[dayIndex].hours != this.countsInputRef.current.value;
+            } else {
+                const userActivity = this.props.performance.userActivities.find(ea => ea.activity.id === activityId);
+
+                update = userActivity && (userActivity.counts[dayIndex] != this.countsInputRef.current.value);
+            }
+
+            if(update && !this.validateFields(this.countsInputRef.current.value)) {
+                this.forceUpdate();
+                return;
+            }
+
             this.props.updateActivityCount(activityId, dayIndex, this.countsInputRef.current.value);
         }
 
+        this.currentPopper = {
+            open: false,
+            anchorEl: null,
+            activityId:undefined,
+            dayIndex:undefined,
+            countsHelper:'',
+        };
+
         this.forceUpdate();
     };
+    
+    private validateFields = (counts:string) => {
 
-    private handleChangePeriod = (event: React.ChangeEvent<{ value: unknown }>) => {
-        const startYear = '2021';
-        const startDate = new Date(`${startYear}-${event.target.value}-01`);
-        startDate.setDate(startDate.getDate()-(startDate.getDay()===0 ? 6 : startDate.getDay()-1));
-        const endDate = new Date(startDate);
-        endDate.setDate(endDate.getDate()+7);
-        //endDate.setMonth(startDate.getMonth()+1);
-        this.props.requestPerformance(startDate, endDate, false);
-    };
+        const wrongValue = 'Wrong value';
 
-    private setCurrentWeek = ():boolean => {
-        if(this.props.from.getDay()!==1 || this.props.to.getDay()!==1)
-        {
-            const from = new Date(this.props.from.getFullYear(), this.props.from.getMonth(), this.props.from.getDate() - (this.props.from.getDay()===0 ? 6 : this.props.from.getDay()-1));
-            const to = new Date(from.getFullYear(), from.getMonth(), from.getDate() + 7);
-            this.props.requestPerformance(from, to, false);
-            return false;
+        const n = Number(counts.replace(',','.'));
+        let result = isFinite(n);
+
+        if(result) {
+            if(this.currentPopper.activityId===0) {
+                if(n>24) {
+                    result = false;
+                    this.currentPopper.countsHelper = 'More than 24 hours per day';
+                }
+            }
+
+            if (n<0) {
+                result = false;
+                this.currentPopper.countsHelper = wrongValue;
+            }
+        }
+        else {
+            // Для отработанных часов в неделю canExpand===false
+            if(this.currentPopper.activityId===0) {
+                const allowedChars = ['V','H'];
+                result = allowedChars.includes(counts.trim().toUpperCase());
+            }
+
+            if(!result) {
+                this.currentPopper.countsHelper = wrongValue;
+            }
         }
 
-        return true;
+        return result;
     }
 
     private handlePopperKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -160,7 +190,7 @@ class Performance extends React.PureComponent<PerformanceProps> {
         {
         case 'Enter':
             event.preventDefault();
-            this.handleClose(true);
+            this.handleClose(event, true);
             break;
         }
     }
@@ -182,10 +212,10 @@ class Performance extends React.PureComponent<PerformanceProps> {
         const currentPopper = this.currentPopper;
 
         return <Popover
-            id={currentPopper.id}
+            id='simplePopper'
             open={currentPopper.open}
             anchorEl={currentPopper.anchorEl}
-            onClose={(e, reason) => this.handleClose(reason==='backdropClick')}
+            onClose={(e, reason) => this.handleClose(e, reason==='backdropClick')}
             anchorOrigin={{
                 vertical: 'top',
                 horizontal: 'left',
@@ -193,21 +223,25 @@ class Performance extends React.PureComponent<PerformanceProps> {
             transformOrigin={{
                 vertical: 'top',
                 horizontal: 'left',
-            }}
-        >
+            }}>
             <div className={classes.popover}>
                 {currentPopper.anchorEl && <TextField variant='outlined'
-                autoFocus
-                inputRef={this.countsInputRef}
-                label='Value'
-                defaultValue={currentPopper.anchorEl.innerText}
-                margin='dense'
-                InputProps={{
-                    classes: {
-                        input: classes.textField,
-                    }}}
-                onKeyPress =  {this.handlePopperKeyPress}
+                    autoFocus
+                    inputRef={this.countsInputRef}
+                    label='Value'
+                    defaultValue={currentPopper.anchorEl.innerText}
+                    margin='dense'
+                    InputProps={{
+                        classes: {
+                            input: classes.textField,
+                        }}}
+                    error={Boolean(currentPopper.countsHelper)}
+                    helperText = {currentPopper.countsHelper}
+                    onKeyPress =  {this.handlePopperKeyPress}
                 />}
+                {Boolean(currentPopper.countsHelper) && <div><Button autoFocus variant='outlined' size='small' onClick={(e) =>this.handleClose(e, false)}>
+                    Close
+                </Button></div>}
             </div>
             </Popover>
     }
@@ -216,9 +250,6 @@ class Performance extends React.PureComponent<PerformanceProps> {
      * Content and markup of summary for month performance
      */
     private renderMonthInfo = () => {
-
-        const { classes } = this.props;
-
         const performance = this.props.performance;
 
         const now = new Date();
@@ -419,7 +450,7 @@ class Performance extends React.PureComponent<PerformanceProps> {
                 {this.renderDaysInfo()}
                 {this.renderUserActivities()}
  
-                <AppAlert messages={this.props.messages}/>
+                {this.props.messages.length>0 && <AppAlert messages={this.props.messages}/>}
 
                 { this.renderFooterPortal() }
             </>
