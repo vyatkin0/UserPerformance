@@ -6,7 +6,9 @@ MSSQL Server used as a data storage.
 These are generic installation instructions.
 
 Edit database connection string in file appsettings.json;
+
 Download and install ASP.NET Core SDK 5.0;
+
 In the solution's folder execute following commands:
 
 `dotnet restore`
