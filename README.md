@@ -23,7 +23,7 @@ These are an Electron client building instructions.
 
 In the solution's folder execute following commands:
     `cd ./UserPerformance/ClientApp`
-    Specify the backend url in config section of package.json "backendUrl": "https://localhost:5001/api/"
+    `Specify the backend url in config section of package.json "backendUrl": "https://localhost:5001/api/"`
     `npm run build:electron`
     `cd electron/`
     `npm install`
