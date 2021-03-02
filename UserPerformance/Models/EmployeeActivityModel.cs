@@ -4,10 +4,10 @@ namespace UserPerformanceApp.Models
 {
     public class EmployeeActivityModel
     {
-        public Activity Activity { get; set; }
+        public Activity activity { get; set; }
 
-        public decimal CountPerMonth { get; set; }
+        public decimal countPerMonth { get; set; }
 
-        public decimal[] Counts { get; set; }
+        public decimal[] counts { get; set; }
     }
 }

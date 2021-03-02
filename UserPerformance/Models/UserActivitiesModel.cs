@@ -6,25 +6,25 @@ namespace UserPerformanceApp.Models
     public class UserActivitiesModel
     {
         [Required]
-        public ActivityDayModel[] Days { get; set; }
+        public ActivityDayModel[] days { get; set; }
 
         [Required]
-        public int CurrentDay { get; set; }
+        public int currentDay { get; set; }
 
         [Required]
-        public decimal MonthWorkDays { get; set; }
+        public decimal monthWorkDays { get; set; }
 
         [Required]
-        public decimal MonthPerformance { get; set; }
+        public decimal monthPerformance { get; set; }
 
-        public List<EmployeeActivityModel> UserActivities { get; set; }
+        public List<EmployeeActivityModel> userActivities { get; set; }
 
-        public string UserName { get; set; }
+        public string userName { get; set; }
 
-        public int EditedDays { get; set; }
+        public int editedDays { get; set; }
 
-        public int MinYear { get; set; }
+        public int minYear { get; set; }
 
-        public int MaxYear { get; set; }
+        public int maxYear { get; set; }
     }
 }

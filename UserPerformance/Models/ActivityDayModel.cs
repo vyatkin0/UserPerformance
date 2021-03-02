@@ -6,11 +6,11 @@ namespace UserPerformanceApp.Models
     public class ActivityDayModel
     {
         [Required]
-        public DateTime Date { get; set; }
+        public DateTime day { get; set; }
 
         [Required]
-        public int DayType { get; set; }
+        public int dayType { get; set; }
 
-        public string Hours { get; set; }
+        public string hours { get; set; }
     }
 }

@@ -4,8 +4,8 @@ namespace UserPerformanceApp.Models
 {
     public class ActivitiesModel
     {
-        public Activity[] Activities { get; set; }
+        public Activity[] activities { get; set; }
 
-        public long[] Selected { get; set; }
+        public long[] selected { get; set; }
     }
 }

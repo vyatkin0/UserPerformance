@@ -7,9 +7,9 @@ namespace UserPerformanceApp.Models
     {
         [Required]
         public DateTime day { get; set; }
-        public decimal? count { get; set; }
-        public string hours { get; set; }
         [Required]
         public long activityId { get; set; }
+        public decimal? count { get; set; }
+        public string hours { get; set; }
     }
 }

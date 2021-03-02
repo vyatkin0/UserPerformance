@@ -37,14 +37,14 @@ namespace UserPerformanceApp.Controllers
             IEnumerable<UserActivity> userActivities = _ctx.UserActivities
                 .Where(a => a.UserId == userId);
 
-            if (model.Selected?.Length > 0)
+            if (model.selected?.Length > 0)
             {
                 _ctx.UserActivities
-                    .RemoveRange(userActivities.Where(a => !model.Selected.Contains(a.ActivityId)
+                    .RemoveRange(userActivities.Where(a => !model.selected.Contains(a.ActivityId)
                                                                 && !_ctx.UserActivityDates.Any(ad =>
                                                                     ad.UserActivity == a)));
 
-                foreach (var id in model.Selected.Except(userActivities.Select(a => a.ActivityId)))
+                foreach (var id in model.selected.Except(userActivities.Select(a => a.ActivityId)))
                 {
                     _ctx.UserActivities.Add(new UserActivity
                     {
@@ -82,8 +82,8 @@ namespace UserPerformanceApp.Controllers
 
             return Ok(new ActivitiesModel
             {
-                Activities = _ctx.Activities.ToArray(),
-                Selected = selected
+                activities = _ctx.Activities.ToArray(),
+                selected = selected
             });
         }
 
@@ -323,25 +323,25 @@ namespace UserPerformanceApp.Controllers
 
             UserActivitiesModel model = new UserActivitiesModel
             {
-                CurrentDay = currentDay,
-                MonthWorkDays = monthDays,
-                Days = new ActivityDayModel[displayDays]
+                currentDay = currentDay,
+                monthWorkDays = monthDays,
+                days = new ActivityDayModel[displayDays]
             };
 
             if (monthHours > 0)
             {
-                model.MonthPerformance = Math.Round(monthActivityMins * 100 / Convert.ToDecimal(monthHours) / 60, 2);
+                model.monthPerformance = Math.Round(monthActivityMins * 100 / Convert.ToDecimal(monthHours) / 60, 2);
             }
 
-            model.MaxYear = now.Year + 1;
+            model.maxYear = now.Year + 1;
 
             DateTime? minDate = _ctx.UserActivityDates.Where(ead => ead.UserId == userId).Min(ead => (DateTime?)ead.Date);
 
-            model.MinYear = minDate.HasValue ? minDate.Value.Year : default;
+            model.minYear = minDate.HasValue ? minDate.Value.Year : default;
 
-            if (model.MinYear < model.MaxYear - 3)
+            if (model.minYear < model.maxYear - 3)
             {
-                model.MinYear = model.MaxYear - 3;
+                model.minYear = model.maxYear - 3;
             }
 
             Dictionary<DateTime, int> dayTypes = _ctx.CalendarDays
@@ -376,11 +376,11 @@ namespace UserPerformanceApp.Controllers
                     }
                 }
 
-                model.Days[i] = new ActivityDayModel
+                model.days[i] = new ActivityDayModel
                 {
-                    Date = activityDay,
-                    DayType = dayType,
-                    Hours = workHours
+                    day = activityDay,
+                    dayType = dayType,
+                    hours = workHours
                 };
 
                 while (null != en.Current && en.Current.Date.Date == activityDay)
@@ -429,14 +429,14 @@ namespace UserPerformanceApp.Controllers
                     .AsEnumerable();
             }
 
-            model.UserActivities = new List<EmployeeActivityModel>();
+            model.userActivities = new List<EmployeeActivityModel>();
             foreach (Activity a in userParentActivities)
             {
-                model.UserActivities.Add(new EmployeeActivityModel
+                model.userActivities.Add(new EmployeeActivityModel
                 {
-                    Activity = a,
-                    Counts = dea.ContainsKey(a.Id) ? dea[a.Id] : new decimal[displayDays],
-                    CountPerMonth = userActivitiesMonth.ContainsKey(a.Id) ? userActivitiesMonth[a.Id] : 0
+                    activity = a,
+                    counts = dea.ContainsKey(a.Id) ? dea[a.Id] : new decimal[displayDays],
+                    countPerMonth = userActivitiesMonth.ContainsKey(a.Id) ? userActivitiesMonth[a.Id] : 0
                 });
 
                 if (a.Children?.Count > 0)
@@ -444,19 +444,19 @@ namespace UserPerformanceApp.Controllers
                     foreach (Activity ca in a.Children.OrderBy(x => x.Id))
                     {
                         ca.WorkCost = Math.Round(ca.WorkCost.GetValueOrDefault(), 1);
-                        model.UserActivities.Add(new EmployeeActivityModel
+                        model.userActivities.Add(new EmployeeActivityModel
                         {
-                            Activity = ca,
-                            Counts = dea.ContainsKey(ca.Id) ? dea[ca.Id] : new decimal[displayDays],
-                            CountPerMonth = userActivitiesMonth.ContainsKey(ca.Id) ? userActivitiesMonth[ca.Id] : 0
+                            activity = ca,
+                            counts = dea.ContainsKey(ca.Id) ? dea[ca.Id] : new decimal[displayDays],
+                            countPerMonth = userActivitiesMonth.ContainsKey(ca.Id) ? userActivitiesMonth[ca.Id] : 0
                         });
                     }
                 }
             }
 
-            model.EditedDays = GetEditedDays(model.CurrentDay, startDate);
+            model.editedDays = GetEditedDays(model.currentDay, startDate);
 
-            model.UserName = user.Name;
+            model.userName = user.Name;
 
             return Ok(model);
         }

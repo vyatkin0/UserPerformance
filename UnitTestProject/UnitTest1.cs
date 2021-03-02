@@ -222,14 +222,14 @@ namespace UnitTestProject
 
             ActivitiesModel activities = okResult.Value as ActivitiesModel;
 
-            Assert.AreEqual(activities.Selected.Length, 3);
-            Assert.AreEqual(activities.Selected[0], 1);
-            Assert.AreEqual(activities.Selected[1], 2);
-            Assert.AreEqual(activities.Selected[2], 3);
-            Assert.AreEqual(activities.Activities.Length, 3);
-            Assert.AreEqual(activities.Activities[0].Id, 1);
-            Assert.AreEqual(activities.Activities[1].Id, 2);
-            Assert.AreEqual(activities.Activities[2].Id, 3);
+            Assert.AreEqual(activities.selected.Length, 3);
+            Assert.AreEqual(activities.selected[0], 1);
+            Assert.AreEqual(activities.selected[1], 2);
+            Assert.AreEqual(activities.selected[2], 3);
+            Assert.AreEqual(activities.activities.Length, 3);
+            Assert.AreEqual(activities.activities[0].Id, 1);
+            Assert.AreEqual(activities.activities[1].Id, 2);
+            Assert.AreEqual(activities.activities[2].Id, 3);
         }
 
         [TestMethod]
@@ -250,16 +250,16 @@ namespace UnitTestProject
 
             int days = (int)(DateTime.Now.Date - startDate).TotalDays;
 
-            Assert.AreEqual(ea.UserName, "User1");
-            Assert.AreEqual(ea.CurrentDay, days);
-            Assert.AreEqual(ea.EditedDays, days + 1);
-            Assert.AreEqual(ea.Days.Length, 2);
-            Assert.AreEqual(ea.Days[0].Date, startDate);
-            Assert.AreEqual(ea.Days[1].Date, new DateTime(2020, 1, 2));
-            Assert.AreEqual(ea.MaxYear, DateTime.Now.Date.Year + 1);
-            Assert.AreEqual(ea.MinYear, 2020);
-            Assert.AreEqual(ea.MonthPerformance, 0);
-            Assert.AreEqual(ea.MonthWorkDays, 0);
+            Assert.AreEqual(ea.userName, "User1");
+            Assert.AreEqual(ea.currentDay, days);
+            Assert.AreEqual(ea.editedDays, days + 1);
+            Assert.AreEqual(ea.days.Length, 2);
+            Assert.AreEqual(ea.days[0].day, startDate);
+            Assert.AreEqual(ea.days[1].day, new DateTime(2020, 1, 2));
+            Assert.AreEqual(ea.maxYear, DateTime.Now.Date.Year + 1);
+            Assert.AreEqual(ea.minYear, 2020);
+            Assert.AreEqual(ea.monthPerformance, 0);
+            Assert.AreEqual(ea.monthWorkDays, 0);
 
             result = ñontroller.UserActivities(new DateTime(2020, 1, 3), startDate, 0, 10);
             Assert.IsInstanceOfType(result, typeof(BadRequestResult));
@@ -271,7 +271,7 @@ namespace UnitTestProject
             PerformanceController ñontroller = ConfigureController();
             ActivitiesModel activities = new ActivitiesModel
             {
-                Selected = new long[] { 1 }
+                selected = new long[] { 1 }
             };
 
             IActionResult result = ñontroller.SaveActivities(activities);
