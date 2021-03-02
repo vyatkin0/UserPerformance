@@ -313,7 +313,7 @@ namespace UserPerformanceApp.Controllers
                 .ToList();
 
             Dictionary<long, decimal> userActivitiesMonth = _ctx.UserActivityDates
-                .Where(ead => ead.UserActivity.UserId == userId && ead.Date >= firstDay && ead.Date < lastDay)
+                .Where(ead => ead.UserActivity.UserId == userId && ead.Date >= firstDay && ead.Date < now)
                 .GroupBy(ead => new { ead.UserActivity.UserId, ead.UserActivity.ActivityId }, (e, eads) => new { e.ActivityId, sum = eads.Sum(a => a.Count) })
                 .ToDictionary(ea => ea.ActivityId, ea => Math.Round(ea.sum, 1));
 
