@@ -178,52 +178,6 @@ namespace UserPerformanceApp.Controllers
         }
 
         [HttpPost("[action]")]
-        public IActionResult AddActivity2(ActivityModel model)
-        {
-            if (!ModelState.IsValid)
-            {
-                var messages = string.Join("; ", ModelState.Values
-                    .SelectMany(x => x.Errors)
-                    .Select(x => x.ErrorMessage));
-
-                return BadRequest(messages);
-            }
-
-            try
-            {
-                Guid? userId = _ctx.Users.Where(u => u.Login == HttpContext.User.Identity.Name.ToUpper()).SingleOrDefault()?.Id;
-
-                if (null == userId || !userId.HasValue)
-                {
-                    userId = Guid.Empty;
-                    //return BadRequest("User is not authorized");
-                }
-
-                var activity = new Activity
-                {
-                    Name = model.name,
-                    Description = model.description,
-                    WorkCost = model.workCost,
-                    ParentId = 1
-                };
-
-                _ctx.UserActivities.Add(new UserActivity
-                {
-                    Activity = activity,
-                    UserId = userId.Value
-                });
-
-                _ctx.SaveChanges();
-
-                return Ok(activity);
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
-        }
-
-        [HttpPost("[action]")]
         public IActionResult DeleteActivity(DeleteActivityModel model)
         {
             if (!ModelState.IsValid)
@@ -359,7 +313,7 @@ namespace UserPerformanceApp.Controllers
                 .ToList();
 
             Dictionary<long, decimal> userActivitiesMonth = _ctx.UserActivityDates
-                .Where(ead => ead.UserActivity.UserId == userId && ead.Date >= firstDay && ead.Date <= lastDay)
+                .Where(ead => ead.UserActivity.UserId == userId && ead.Date >= firstDay && ead.Date < lastDay)
                 .GroupBy(ead => new { ead.UserActivity.UserId, ead.UserActivity.ActivityId }, (e, eads) => new { e.ActivityId, sum = eads.Sum(a => a.Count) })
                 .ToDictionary(ea => ea.ActivityId, ea => Math.Round(ea.sum, 1));
 

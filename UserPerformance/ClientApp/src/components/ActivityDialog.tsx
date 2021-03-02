@@ -36,21 +36,21 @@ class ActivityDialog extends React.PureComponent<ActivityDialogProps, ActivityDi
     private descrInputRef;
     private workCostInputRef;
 
-    public handleDelete = () => {
+    private handleDelete = () => {
         if(this.props.activity) {
             this.setState({confirmDeleteOpen: false});
             this.props.handleDelete(this.props.activity.id);
         }
     }
-    
-    public handleSave = () => {
+
+    private handleSave = () => {
         const id = this.props.activity ? this.props.activity.id : null;
 
         const workCost = Number(this.workCostInputRef.current.value);
         this.props.handleSave(id, this.nameInputRef.current.value, this.descrInputRef.current.value, workCost);
     }
 
-    public deleteOnClick = (event) => {
+    private deleteOnClick = (event) => {
         this.setState({confirmDeleteOpen: true});
     }
     public render = () => <>
