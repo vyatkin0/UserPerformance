@@ -273,7 +273,6 @@ namespace UserPerformanceApp.Controllers
             DateTime endDate = to;      // startDate.AddDays(_displayDays);
 
             DateTime firstDay = new DateTime(now.Year, now.Month, 1);
-            DateTime lastDay = firstDay.AddMonths(1);
 
             var userMonthHours = _ctx.UserDateWorkHours
                 .Where(wh => wh.UserId == userId && wh.Date >= firstDay && wh.Date < now)
@@ -312,8 +311,9 @@ namespace UserPerformanceApp.Controllers
                 .OrderBy(a => a.Date)
                 .ToList();
 
+            DateTime lastDay = firstDay.AddMonths(1);
             Dictionary<long, decimal> userActivitiesMonth = _ctx.UserActivityDates
-                .Where(ead => ead.UserActivity.UserId == userId && ead.Date >= firstDay && ead.Date < now)
+                .Where(ead => ead.UserActivity.UserId == userId && ead.Date >= firstDay && ead.Date < lastDay)
                 .GroupBy(ead => new { ead.UserActivity.UserId, ead.UserActivity.ActivityId }, (e, eads) => new { e.ActivityId, sum = eads.Sum(a => a.Count) })
                 .ToDictionary(ea => ea.ActivityId, ea => Math.Round(ea.sum, 1));
 
