@@ -276,7 +276,7 @@ namespace UserPerformanceApp.Controllers
             DateTime lastDay = firstDay.AddMonths(1);
 
             var userMonthHours = _ctx.UserDateWorkHours
-                .Where(wh => wh.UserId == userId && wh.Date >= firstDay && wh.Date < lastDay)
+                .Where(wh => wh.UserId == userId && wh.Date >= firstDay && wh.Date < now)
                 .Select(wh => new { wh.Date, wh.WorkHours })
                 .ToDictionary(wh => wh.Date);
             //.Sum(wh => wh.WorkHours);
@@ -303,7 +303,7 @@ namespace UserPerformanceApp.Controllers
             }
 
             decimal monthActivityMins = _ctx.UserActivityDates
-                .Where(ead => ead.UserActivity.UserId == userId && ead.Date >= firstDay && ead.Date < lastDay)
+                .Where(ead => ead.UserActivity.UserId == userId && ead.Date >= firstDay && ead.Date < now)
                 .Sum(ead => ead.Count * ead.UserActivity.Activity.WorkCost.GetValueOrDefault());
 
             List<UserActivityDate> userActivityDates = _ctx.UserActivityDates
