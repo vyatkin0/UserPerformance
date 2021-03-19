@@ -1,5 +1,5 @@
 /**
- * Test for component with material-ui 
+ * Test for components with material-ui 
  */
 
 /**
