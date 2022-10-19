@@ -2,9 +2,9 @@
  * Content and markup of small Alert window with information about results of latest actions
  */
 
-import * as Alert from '@material-ui/lab/Alert';
-import * as React from 'react';
-import * as ReactDOM from 'react-dom'
+import Alert, {Color as AlertColor} from '@material-ui/lab/Alert';
+import React from 'react';
+import ReactDOM from 'react-dom'
 
 import { WithStyles, withStyles } from '@material-ui/core/styles';
 
@@ -14,7 +14,7 @@ export let currentMessageId: number = 0;
 
 export interface InfoMessage {
    id: number;
-   severity: Alert.Color;
+   severity: AlertColor;
    text: string;
    timeoutID?: any;
    onClick?: Function;
@@ -56,21 +56,24 @@ class AppAlert extends React.PureComponent<AppAlertProps> {
         });
     }
 
+    private onClickAlert = () => this.handleClickAlert(this.props.messages[0].id);
+
     public render() {
         if(this.props.messages.length < 1) {
             return null;
         }
 
         const { classes } = this.props;
+        
         const message = this.props.messages[0];
 
         if(message.severity === 'success'){
             message.timeoutID = setTimeout(()=>this.handleClickAlert(message.id), 3000);
         }
         
-        return ReactDOM.createPortal(<Alert.default className={classes.alert} variant='filled' severity={message.severity} onClick={() => this.handleClickAlert(message.id)}>
+        return ReactDOM.createPortal(<Alert className={classes.alert} variant='filled' severity={message.severity} onClick={this.onClickAlert}>
                 {message.text}
-            </Alert.default>,
+            </Alert>,
              document.getElementById("bottomAlert")) 
     }
 }

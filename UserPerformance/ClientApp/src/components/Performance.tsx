@@ -3,8 +3,8 @@
  */
 
 import * as PerformanceStore from '../store/Performance';
-import * as React from 'react';
-import * as ReactDOM from 'react-dom'
+import React from 'react';
+import ReactDOM from 'react-dom'
 
 import {
     Button,
@@ -26,9 +26,9 @@ import PeriodSelect from './PeriodSelect';
 import { connect } from 'react-redux';
 import styles from '../styles';
 
-type PerformanceProps =  PerformanceStore.PerformanceState
- & WithStyles<typeof styles>
- & typeof PerformanceStore.actionCreators; // ... plus action creators we've requested
+type PerformanceProps = PerformanceStore.PerformanceState
+    & WithStyles<typeof styles>
+    & typeof PerformanceStore.actionCreators; // ... plus action creators we've requested
 
 class Performance extends React.PureComponent<PerformanceProps> {
 
@@ -38,28 +38,28 @@ class Performance extends React.PureComponent<PerformanceProps> {
     }
 
     public componentDidMount() {
-        
+
         // Support for electron environment
         const w = window as any;
         if (typeof w.ipcRenderer === 'undefined') {
             window.addEventListener('beforeunload', this.confirmExit.bind(this));
         } else {
             w.ipcRenderer.on('app-close', (event, arg) => {
-                const fakeEvent = {returnValue: true, preventDefault:()=>{}};
+                const fakeEvent = { returnValue: true, preventDefault: () => { } };
                 this.confirmExit(fakeEvent);
 
                 event.returnValue = typeof fakeEvent.returnValue !== 'undefined';
                 w.ipcRenderer.send('closed', event.returnValue);
             });
         }
- 
+
         const now = new Date();
         const from = new Date(now.getFullYear(), now.getMonth(), now.getDate());
         const to = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
         this.props.requestPerformance(from, to, true);
         //this.ensureDataFetched();
     }
-    
+
     public componentDidUpdate() {
         this.ensureDataFetched();
     }
@@ -71,15 +71,15 @@ class Performance extends React.PureComponent<PerformanceProps> {
     private countsInputRef;
 
     private currentPopper = {
-        open:false,
+        open: false,
         anchorEl: null,
-        activityId:undefined,
-        dayIndex:undefined,
-        countsHelper:'',
+        activityId: undefined,
+        dayIndex: undefined,
+        countsHelper: '',
     };
 
     private confirmExit = (e) => {
-        if(Object.keys(this.props.changes).length>0){
+        if (Object.keys(this.props.changes).length > 0) {
             // Cancel the event
             e.preventDefault(); // If you prevent default behavior in Mozilla Firefox prompt will always be shown
 
@@ -93,13 +93,13 @@ class Performance extends React.PureComponent<PerformanceProps> {
             delete e['returnValue'];
         }
     }
-    private handleClick = (event: React.MouseEvent<HTMLSpanElement>, activityId:number, dayIndex:number) => {
-        if( this.props.performance.currentDay < 0) {
+    private handleClick = (event: React.MouseEvent<HTMLSpanElement>, activityId: number, dayIndex: number) => {
+        if (this.props.performance.currentDay < 0) {
             return;
         }
-        
-        const offset = this.props.performance.currentDay-dayIndex;
-        if( offset<0 || offset>=this.props.performance.editedDays ) {
+
+        const offset = this.props.performance.currentDay - dayIndex;
+        if (offset < 0 || offset >= this.props.performance.editedDays) {
             return;
         }
 
@@ -108,7 +108,7 @@ class Performance extends React.PureComponent<PerformanceProps> {
             anchorEl: event.currentTarget,
             activityId,
             dayIndex,
-            countsHelper:'',
+            countsHelper: '',
         };
 
         this.forceUpdate();
@@ -117,13 +117,13 @@ class Performance extends React.PureComponent<PerformanceProps> {
     private handleClose = (event, update: boolean) => {
         event.preventDefault();
 
-        const {activityId, dayIndex} = this.currentPopper;
-        
-        if ( typeof activityId === 'undefined'
+        const { activityId, dayIndex } = this.currentPopper;
+
+        if (typeof activityId === 'undefined'
             || activityId === null) return;
 
-        if(update) {
-            if(0 === activityId) {
+        if (update) {
+            if (0 === activityId) {
                 update = this.props.performance.days[dayIndex].hours != this.countsInputRef.current.value;
             } else {
                 const userActivity = this.props.performance.userActivities.find(ea => ea.activity.id === activityId);
@@ -131,7 +131,7 @@ class Performance extends React.PureComponent<PerformanceProps> {
                 update = userActivity && (userActivity.counts[dayIndex] != this.countsInputRef.current.value);
             }
 
-            if(update && !this.validateFields(this.countsInputRef.current.value)) {
+            if (update && !this.validateFields(this.countsInputRef.current.value)) {
                 this.forceUpdate();
                 return;
             }
@@ -142,42 +142,42 @@ class Performance extends React.PureComponent<PerformanceProps> {
         this.currentPopper = {
             open: false,
             anchorEl: null,
-            activityId:undefined,
-            dayIndex:undefined,
-            countsHelper:'',
+            activityId: undefined,
+            dayIndex: undefined,
+            countsHelper: '',
         };
 
         this.forceUpdate();
     };
-    
-    private validateFields = (counts:string) => {
+
+    private validateFields = (counts: string) => {
 
         const wrongValue = 'Wrong value';
 
-        const n = Number(counts.replace(',','.'));
+        const n = Number(counts.replace(',', '.'));
         let result = isFinite(n);
 
-        if(result) {
-            if(this.currentPopper.activityId===0) {
-                if(n>24) {
+        if (result) {
+            if (this.currentPopper.activityId === 0) {
+                if (n > 24) {
                     result = false;
                     this.currentPopper.countsHelper = 'More than 24 hours per day';
                 }
             }
 
-            if (n<0) {
+            if (n < 0) {
                 result = false;
                 this.currentPopper.countsHelper = wrongValue;
             }
         }
         else {
             // Для отработанных часов в неделю canExpand===false
-            if(this.currentPopper.activityId===0) {
-                const allowedChars = ['V','H'];
+            if (this.currentPopper.activityId === 0) {
+                const allowedChars = ['V', 'H'];
                 result = allowedChars.includes(counts.trim().toUpperCase());
             }
 
-            if(!result) {
+            if (!result) {
                 this.currentPopper.countsHelper = wrongValue;
             }
         }
@@ -186,22 +186,23 @@ class Performance extends React.PureComponent<PerformanceProps> {
     }
 
     private handlePopperKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
-        switch(event.key)
-        {
-        case 'Enter':
-            event.preventDefault();
-            this.handleClose(event, true);
-            break;
+        switch (event.key) {
+            case 'Enter':
+                event.preventDefault();
+                this.handleClose(event, true);
+                break;
         }
     }
 
-    private renderStub = () => 
+    private renderStub = () =>
         <div className='flex_container'>
             <div>
                 <h1>Activities management</h1>
             </div>
-        </div> 
+        </div>
 
+    private onClosePopover = (e, reason) => this.handleClose(e, reason === 'backdropClick');
+    private onCloseButtonPopover = (e) => this.handleClose(e, false);
 
     /**
      * Content and markup small windows for edit counts of task and day hours
@@ -215,7 +216,7 @@ class Performance extends React.PureComponent<PerformanceProps> {
             id='simplePopper'
             open={currentPopper.open}
             anchorEl={currentPopper.anchorEl}
-            onClose={(e, reason) => this.handleClose(e, reason==='backdropClick')}
+            onClose={this.onClosePopover}
             anchorOrigin={{
                 vertical: 'top',
                 horizontal: 'left',
@@ -234,18 +235,20 @@ class Performance extends React.PureComponent<PerformanceProps> {
                     InputProps={{
                         classes: {
                             input: classes.textField,
-                        }}}
+                        }
+                    }}
                     error={Boolean(currentPopper.countsHelper)}
-                    helperText = {currentPopper.countsHelper}
-                    onKeyPress =  {this.handlePopperKeyPress}
+                    helperText={currentPopper.countsHelper}
+                    onKeyPress={this.handlePopperKeyPress}
                 />}
-                {Boolean(currentPopper.countsHelper) && <div><Button autoFocus variant='outlined' size='small' onClick={(e) =>this.handleClose(e, false)}>
+                {Boolean(currentPopper.countsHelper) && <div><Button autoFocus variant='outlined' size='small' onClick={this.onCloseButtonPopover}>
                     Close
                 </Button></div>}
             </div>
-            </Popover>
+        </Popover>
     }
 
+    private onChangePeriodSelect = (from: Date, to: Date) => this.props.requestPerformance(from, to, false);
     /**
      * Content and markup of summary for month performance
      */
@@ -256,30 +259,30 @@ class Performance extends React.PureComponent<PerformanceProps> {
         now.setHours(0, 0, 0, 0);
         const nowNextDay = new Date(now);
         nowNextDay.setDate(nowNextDay.getDate() + 1);
-        
+
         const lastDay = new Date(this.props.to);
         lastDay.setDate(lastDay.getDate() - 1);
-        
+
         return <>
-        <div className='flex_container'>
-            <div>
-                <h1>Activities management</h1>
-                <h3>{performance.userName}</h3>
+            <div className='flex_container'>
+                <div>
+                    <h1>Activities management</h1>
+                    <h3>{performance.userName}</h3>
+                </div>
+                <PeriodSelect
+                    from={this.props.from}
+                    to={this.props.to}
+                    minYear={this.props.performance.minYear}
+                    maxYear={this.props.performance.maxYear}
+                    onChange={this.onChangePeriodSelect}
+                />
             </div>
-            <PeriodSelect
-            from = {this.props.from}
-            to = {this.props.to}
-            minYear = {this.props.performance.minYear}
-            maxYear = {this.props.performance.maxYear}
-            onChange = {(from: Date, to: Date)=> this.props.requestPerformance(from, to, false)}
-            />
-        </div>
-        <div className='performance_container'>
-            Month performance
-            <span className={(performance.monthPerformance < 100 ? 'warning ' : '') + 'performance_data'} >{performance.monthPerformance+'%'}</span>
-            Working days
-            <span className='performance_data'>{performance.monthWorkDays}</span>
-        </div>
+            <div className='performance_container'>
+                Month performance
+                <span className={(performance.monthPerformance < 100 ? 'warning ' : '') + 'performance_data'} >{performance.monthPerformance + '%'}</span>
+                Working days
+                <span className='performance_data'>{performance.monthWorkDays}</span>
+            </div>
         </>
     }
 
@@ -292,61 +295,62 @@ class Performance extends React.PureComponent<PerformanceProps> {
 
         const performance = this.props.performance;
         const handleClick = this.handleClick.bind(this);
-        
+
         return <TableContainer component={Paper}>
             <Table className={classes.table} size='small' aria-label='simple table'>
                 <TableHead>
-                <TableRow>
-                    <TableCell align='left'>Name</TableCell>
-                    <TableCell className={classes.monthHeadCell} align='center'></TableCell>
-                    {performance.days.map((day,index) =>
-                        <TableCell key={'month:'+ index} className={classes.numCell} align='center'>{`${day.day.getDate()}.${day.day.getMonth()+1}`}</TableCell>)}
-                </TableRow>
+                    <TableRow>
+                        <TableCell align='left'>Name</TableCell>
+                        <TableCell className={classes.monthHeadCell} align='center'></TableCell>
+                        {performance.days.map((day, index) =>
+                            <TableCell key={'month:' + index} className={classes.numCell} align='center'>{`${day.day.getDate()}.${day.day.getMonth() + 1}`}</TableCell>)}
+                    </TableRow>
                 </TableHead>
                 <TableBody>
-                <TableRow>
-                    <TableCell component='th' scope='row'>Day performance</TableCell>
-                    <TableCell align='center'></TableCell>
-                    {performance.days.map((d, index)=>{
+                    <TableRow>
+                        <TableCell component='th' scope='row'>Day performance</TableCell>
+                        <TableCell align='center'></TableCell>
+                        {performance.days.map((d, index) => {
 
-                        let monthPerformance = '';
-                        const dayHours = Number(d.hours);
+                            let monthPerformance = '';
+                            const dayHours = Number(d.hours);
 
-                        let className = null;
+                            let className = null;
 
-                        if(dayHours>0)
-                        { 
-                            const mp = performance.userActivities.reduce((result, a)=> {
-                                if(a.counts[index]>0 && a.activity.workCost>0) {
-                                    return result + a.counts[index]*a.activity.workCost/60/dayHours;
+                            if (dayHours > 0) {
+                                const mp = performance.userActivities.reduce((result, a) => {
+                                    if (a.counts[index] > 0 && a.activity.workCost > 0) {
+                                        return result + a.counts[index] * a.activity.workCost / 60 / dayHours;
+                                    }
+
+                                    return result;
+                                }, 0);
+
+                                monthPerformance = parseFloat((mp * 100).toFixed(2)) + '%'
+
+                                if (mp < 1) {
+                                    className = classes.warnCell;
                                 }
-                                
-                                return result;
-                            } , 0);
-
-                            monthPerformance = parseFloat((mp * 100).toFixed(2)) + '%'
-
-                            if(mp<1) {
-                                className = classes.warnCell;
                             }
-                        }
 
-                        return <TableCell key={'month:'+ index} align='center' className={className}>{monthPerformance}</TableCell>})}
-                </TableRow>
-                <TableRow>
-                    <TableCell component='th' scope='row'>Spent hours</TableCell>
-                    <TableCell align='center'></TableCell>
-                    {performance.days.map((d, index)=> {
-                        let className = index<=performance.currentDay && index+performance.editedDays>performance.currentDay ? classes.cellSpan + ' ' + classes.cellSpanCurrent : classes.cellSpan;
+                            return <TableCell key={'month:' + index} align='center' className={className}>{monthPerformance}</TableCell>
+                        })}
+                    </TableRow>
+                    <TableRow>
+                        <TableCell component='th' scope='row'>Spent hours</TableCell>
+                        <TableCell align='center'></TableCell>
+                        {performance.days.map((d, index) => {
+                            let className = index <= performance.currentDay && index + performance.editedDays > performance.currentDay ? classes.cellSpan + ' ' + classes.cellSpanCurrent : classes.cellSpan;
 
-                        if(this.isValueChanged(d.day.valueOf(), 0)) {
-                            className += ' ' + classes.changedValue;
-                        }
+                            if (this.isValueChanged(d.day.valueOf(), 0)) {
+                                className += ' ' + classes.changedValue;
+                            }
 
-                        return <TableCell key={'month:'+ index} align='center'>
-                        {<span className={className} onClick={(e)=>handleClick(e, 0, index)}>{d.hours}</span>}
-                    </TableCell>})}
-                </TableRow>
+                            return <TableCell key={'month:' + index} align='center'>
+                                {<span className={className} onClick={(e) => handleClick(e, 0, index)}>{d.hours}</span>}
+                            </TableCell>
+                        })}
+                    </TableRow>
                 </TableBody>
             </Table>
         </TableContainer>
@@ -357,17 +361,17 @@ class Performance extends React.PureComponent<PerformanceProps> {
      */
     private renderFooterPortal = () => {
         const { classes } = this.props;
-        
-        const saveBtnDisabled = !(Object.keys(this.props.changes).length>0);
+
+        const saveBtnDisabled = !(Object.keys(this.props.changes).length > 0);
 
         return ReactDOM.createPortal(<div className={classes.divButtons}>
             <Button variant='contained' color='secondary' disabled={saveBtnDisabled} onClick={this.props.sendPerformance}>
-            Save
+                Save
             </Button>
             <Button variant='contained' color='primary' href='#/activities'/*this.props.gotoActivities*/>
-            Select activities
+                Select activities
             </Button>
-            </div>, document.getElementById('footerToolbar'))
+        </div>, document.getElementById('footerToolbar'))
     }
 
     /**
@@ -427,19 +431,19 @@ class Performance extends React.PureComponent<PerformanceProps> {
         })
     }
 
-    isValueChanged(day, activityId) :boolean {
-        if (Object.keys(this.props.changes).length<1) {
+    isValueChanged(day, activityId): boolean {
+        if (Object.keys(this.props.changes).length < 1) {
             return false;
         }
 
         return this.props.changes[day]
             && this.props.changes[day][activityId];
     }
-    
+
     public render() {
         const performance = this.props.performance;
-        
-        if(!performance || !performance.days || performance.days.length<1) {
+
+        if (!performance || !performance.days || performance.days.length < 1) {
             return this.renderStub();
         }
 
@@ -449,10 +453,10 @@ class Performance extends React.PureComponent<PerformanceProps> {
                 {this.renderEditPopover()}
                 {this.renderDaysInfo()}
                 {this.renderUserActivities()}
- 
-                {this.props.messages.length>0 && <AppAlert messages={this.props.messages}/>}
 
-                { this.renderFooterPortal() }
+                {this.props.messages.length > 0 && <AppAlert messages={this.props.messages} />}
+
+                {this.renderFooterPortal()}
             </>
         );
     }
@@ -461,4 +465,4 @@ class Performance extends React.PureComponent<PerformanceProps> {
 export default connect(
     (state: ApplicationState) => state.performance,
     PerformanceStore.actionCreators
-  )(withStyles(styles)(Performance) as any);
+)(withStyles(styles)(Performance) as any);

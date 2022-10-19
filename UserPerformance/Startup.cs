@@ -26,8 +26,8 @@ namespace EmployeePerformance
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            //if (IsDevEnv())
-            //{
+            if (IsDevEnv())
+            {
                 services.AddCors(options => options.AddPolicy(_appOrigins,
                     builder =>
                     {
@@ -37,7 +37,7 @@ namespace EmployeePerformance
                             .AllowCredentials();
                             /*.WithExposedHeaders(HeaderNames.ContentDisposition)*/;
                     }));
-            //}
+            }
             /*
             else
             {

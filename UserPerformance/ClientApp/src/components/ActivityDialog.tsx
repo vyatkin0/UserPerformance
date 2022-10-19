@@ -2,17 +2,17 @@
  * Content and markup of Add new activity dialog
  */
 
-import * as React from 'react';
+import React from 'react';
 
-import {Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField} from '@material-ui/core';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@material-ui/core';
 
 import Activity from '../store/Activity';
 import ConfirmAlert from './ConfirmAlert';
 
 interface ActivityDialogProps {
     handleDelete(id: number);
-    handleSave(id: number, name:string, description:string, workCost:number):void;
-    handleClose():void;
+    handleSave(id: number, name: string, description: string, workCost: number): void;
+    handleClose(): void;
     open: boolean;
     activity: Activity;
 }
@@ -29,28 +29,28 @@ class ActivityDialog extends React.PureComponent<ActivityDialogProps, ActivityDi
 
     private defaultState = {
         confirmDeleteOpen: false,
-        confirmReplaceOpen:false,
-        nameHelper:'',
-        descriptionHelper:'',
-        workCostHelper:'',
+        confirmReplaceOpen: false,
+        nameHelper: '',
+        descriptionHelper: '',
+        workCostHelper: '',
     };
 
     constructor(props) {
         super(props);
-        this.nameInputRef = React.createRef(); 
+        this.nameInputRef = React.createRef();
         this.descrInputRef = React.createRef();
         this.workCostInputRef = React.createRef();
 
-        this.state = {...this.defaultState};
+        this.state = { ...this.defaultState };
     }
 
-    private nameInputRef; 
+    private nameInputRef;
     private descrInputRef;
     private workCostInputRef;
 
     private handleDelete = () => {
-        if(this.props.activity) {
-            this.setState({confirmDeleteOpen: false});
+        if (this.props.activity) {
+            this.setState({ confirmDeleteOpen: false });
             this.props.handleDelete(this.props.activity.id);
         }
 
@@ -62,28 +62,28 @@ class ActivityDialog extends React.PureComponent<ActivityDialogProps, ActivityDi
 
         const workCost = Number(this.workCostInputRef.current.value);
 
-        if(this.validateFields(this.nameInputRef.current.value, this.descrInputRef.current.value, workCost)) {
+        if (this.validateFields(this.nameInputRef.current.value, this.descrInputRef.current.value, workCost)) {
             this.props.handleSave(id, this.nameInputRef.current.value, this.descrInputRef.current.value, workCost);
 
             this.setState({ ...this.defaultState });
         }
     }
 
-    private validateFields = (name:string, description:string, workCost:number) => {
+    private validateFields = (name: string, description: string, workCost: number) => {
         let result = true;
 
-        if(!name) {
+        if (!name) {
             result = false;
-            this.setState({nameHelper: 'Name is not specified'});
+            this.setState({ nameHelper: 'Name is not specified' });
         } else {
-            this.setState({nameHelper: ''});
+            this.setState({ nameHelper: '' });
         }
 
-        if(!isFinite(workCost) || workCost>24*60 || workCost<=0) {
+        if (!isFinite(workCost) || workCost > 24 * 60 || workCost <= 0) {
             result = false;
-            this.setState({workCostHelper: 'Wrong value'});
+            this.setState({ workCostHelper: 'Wrong value' });
         } else {
-            this.setState({workCostHelper: ''});
+            this.setState({ workCostHelper: '' });
         }
 
         return result;
@@ -91,12 +91,15 @@ class ActivityDialog extends React.PureComponent<ActivityDialogProps, ActivityDi
 
     private handleClose = () => {
         this.props.handleClose();
-        this.setState({...this.defaultState});
+        this.setState({ ...this.defaultState });
     }
 
     private deleteOnClick = (event) => {
-        this.setState({confirmDeleteOpen: true});
+        this.setState({ confirmDeleteOpen: true });
     }
+
+    private handleNo = () => this.setState({ confirmDeleteOpen: false });
+
     public render = () => <>
         <Dialog
             open={this.props.open}
@@ -114,7 +117,7 @@ class ActivityDialog extends React.PureComponent<ActivityDialogProps, ActivityDi
                     fullWidth
                     inputRef={this.nameInputRef}
                     defaultValue={this.props.activity && this.props.activity.name}
-                    helperText = {this.state.nameHelper}
+                    helperText={this.state.nameHelper}
                 />
                 <TextField
                     error={Boolean(this.state.descriptionHelper)}
@@ -124,7 +127,7 @@ class ActivityDialog extends React.PureComponent<ActivityDialogProps, ActivityDi
                     fullWidth
                     inputRef={this.descrInputRef}
                     defaultValue={this.props.activity && this.props.activity.description}
-                    helperText = {this.state.descriptionHelper}
+                    helperText={this.state.descriptionHelper}
                 />
                 <TextField
                     required
@@ -136,7 +139,7 @@ class ActivityDialog extends React.PureComponent<ActivityDialogProps, ActivityDi
                     fullWidth
                     inputRef={this.workCostInputRef}
                     defaultValue={this.props.activity && this.props.activity.workCost}
-                    helperText = {this.state.workCostHelper}
+                    helperText={this.state.workCostHelper}
                 />
             </DialogContent>
             <DialogActions>
@@ -151,14 +154,13 @@ class ActivityDialog extends React.PureComponent<ActivityDialogProps, ActivityDi
                 </Button>
             </DialogActions>
         </Dialog>
-         {this.props.activity && <ConfirmAlert
-            key={'delete:'+this.props.activity.id}
+        {this.props.activity && <ConfirmAlert
             open={this.state.confirmDeleteOpen}
-            message={<span>{`Delete activity "${this.props.activity.name}"?`}<br/>You can not undo this action!</span>}
+            message={<span>{`Delete activity "${this.props.activity.name}"?`}<br />You can not undo this action!</span>}
             title='Confirm deleting activity'
-            handleNo={()=>this.setState({confirmDeleteOpen: false})}
-            handleYes={this.handleDelete}/>}
-    </>
+            handleNo={this.handleNo}
+            handleYes={this.handleDelete} />}
+    </>;
 }
 
 export default ActivityDialog;

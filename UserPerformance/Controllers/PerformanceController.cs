@@ -301,9 +301,9 @@ namespace UserPerformanceApp.Controllers
                 day = day.AddDays(1);
             }
 
-            decimal monthActivityMins = _ctx.UserActivityDates
+            decimal monthActivityMins = Convert.ToDecimal(_ctx.UserActivityDates
                 .Where(ead => ead.UserActivity.UserId == userId && ead.Date >= firstDay && ead.Date < now)
-                .Sum(ead => ead.Count * ead.UserActivity.Activity.WorkCost.GetValueOrDefault());
+                .Sum(ead => (double)(ead.Count * ead.UserActivity.Activity.WorkCost.GetValueOrDefault())));
 
             List<UserActivityDate> userActivityDates = _ctx.UserActivityDates
                 .Where(ead => ead.UserActivity.UserId == userId && ead.Date >= startDate && ead.Date <= endDate)
@@ -314,8 +314,8 @@ namespace UserPerformanceApp.Controllers
             DateTime lastDay = firstDay.AddMonths(1);
             Dictionary<long, decimal> userActivitiesMonth = _ctx.UserActivityDates
                 .Where(ead => ead.UserActivity.UserId == userId && ead.Date >= firstDay && ead.Date < lastDay)
-                .GroupBy(ead => new { ead.UserActivity.UserId, ead.UserActivity.ActivityId }, (e, eads) => new { e.ActivityId, sum = eads.Sum(a => a.Count) })
-                .ToDictionary(ea => ea.ActivityId, ea => Math.Round(ea.sum, 1));
+                .GroupBy(ead => new { ead.UserActivity.UserId, ead.UserActivity.ActivityId }, (e, eads) => new { e.ActivityId, sum = eads.Sum(a => (double)a.Count) })
+                .ToDictionary(ea => ea.ActivityId, ea => Math.Round((decimal)ea.sum, 1));
 
             Dictionary<DateTime, UserDateWorkHours> employeeWorkHours = _ctx.UserDateWorkHours
                 .Where(wh => wh.UserId == userId && wh.Date >= startDate && wh.Date <= endDate)

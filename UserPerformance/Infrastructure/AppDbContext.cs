@@ -75,7 +75,8 @@ namespace UserPerformanceApp.Infrastructure
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer(_configuration.GetConnectionString("UserPerformance")); 
+                //optionsBuilder.UseSqlServer(_configuration.GetConnectionString("UserPerformance"));
+                optionsBuilder.UseSqlite(_configuration.GetConnectionString("UserPerformance"));
                 optionsBuilder.UseLoggerFactory(_loggerFactory);
                 //optionsBuilder.EnableSensitiveDataLogging(true);
             }
@@ -147,10 +148,10 @@ namespace UserPerformanceApp.Infrastructure
         [Column(TypeName = "nvarchar(255)")]
         public string Name { get; set; }
 
-        [Column(TypeName = "nvarchar(max)")]
+        //[Column(TypeName = "nvarchar(max)")]
         public string Description { get; set; }
 
-        [Column(TypeName = "decimal(9,2)")]
+        [Column(TypeName = "NUMERIC")]
         public decimal? WorkCost { get; set; }
 
         [JsonIgnore]
@@ -180,7 +181,7 @@ namespace UserPerformanceApp.Infrastructure
         [Column(TypeName = "date")]
         public DateTime @Date { get; set; }
 
-        [Column(TypeName = "decimal(9,2)")]
+        [Column(TypeName = "NUMERIC")]
         public decimal Count { get; set; }
     }
 

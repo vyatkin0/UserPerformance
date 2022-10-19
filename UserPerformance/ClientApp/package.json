@@ -6,7 +6,7 @@
     "dependencies": {
         "@material-ui/core": "^4.11.1",
         "@material-ui/icons": "^4.9.1",
-        "@material-ui/lab": "^4.0.0-alpha.57",
+        "@material-ui/lab": "^4.0.0-alpha.61",
         "connected-react-router": "6.5.2",
         "history": "4.10.1",
         "react": "^16.11.0",
@@ -19,18 +19,19 @@
         "redux-thunk": "2.3.0"
     },
     "devDependencies": {
-        "@types/history": "4.7.3",
-        "@types/jest": "24.0.19",
-        "@types/node": "12.11.6",
-        "@types/react": "16.9.9",
-        "@types/react-dom": "16.9.2",
-        "@types/react-redux": "7.1.5",
+        "@types/enzyme": "^3.10.12",
+        "@types/enzyme-adapter-react-16": "^1.0.6",
+        "@types/history": "5.0.0",
+        "@types/react": "^16.11.0",
+        "@types/react-dom": "^16.9.0",
+        "@types/react-redux": "7.1.1",
         "@types/react-router": "5.1.2",
-        "@types/react-router-dom": "5.1.0",
+        "@types/react-router-dom": "5.1.2",
+        "@types/react-test-renderer": "^16.9.0",
         "cross-env": "^6.0.3",
         "enzyme": "^3.11.0",
         "enzyme-adapter-react-16": "^1.15.6",
-        "react-test-renderer": "^17.0.1",
+        "react-test-renderer": "^16.9.0",
         "typescript": "^3.9.7"
     },
     "scripts": {
@@ -43,7 +44,7 @@
     },
     "homepage": "./",
     "config": {
-        "backendUrl": "https://localhost:5001/api/"
+        "backendUrl": "/api/"
     },
     "eslintConfig": {
         "extends": "react-app"

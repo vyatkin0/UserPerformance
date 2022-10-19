@@ -2,7 +2,7 @@
  * Content and markup of weeks selection component
  */
 
-import * as React from 'react';
+import React from 'react';
 
 import {ChevronLeftRounded, ChevronRightRounded} from '@material-ui/icons';
 import {Divider, Link, Menu, MenuItem} from '@material-ui/core';
@@ -26,6 +26,7 @@ export default class PeriodSelect extends React.PureComponent<PeriodSelectProps,
         super(props);
         this.state={anchorMonthEl: null, anchorYearEl: null};
     }
+
     private setCurrentWeek = ():boolean => {
         if(this.props.from.getDay()!==1 || this.props.to.getDay()!==1)
         {
@@ -181,7 +182,7 @@ export default class PeriodSelect extends React.PureComponent<PeriodSelectProps,
                 open={Boolean(this.state.anchorMonthEl)}
                 onClose={this.handleSelectClose}
             >
-            {result}
+                {result}
             </Menu>
         </>
     }
@@ -198,7 +199,7 @@ export default class PeriodSelect extends React.PureComponent<PeriodSelectProps,
         return <div className='period_control'>
             <Link href='#' onClick={this.handlePrevWeek}>
             <ChevronLeftRounded/></Link>
-                <span>{this.props.from.getDate() + ' - ' + lastDay.getDate()}</span>
+            <span>{this.props.from.getDate() + ' - ' + lastDay.getDate()}</span>
             <Link href='#' onClick={this.handleNextWeek}>
             <ChevronRightRounded/></Link>
             <Divider orientation='vertical' flexItem />
