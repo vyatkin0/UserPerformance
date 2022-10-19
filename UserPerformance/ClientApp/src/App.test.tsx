@@ -1,7 +1,9 @@
 import * as ActivitiesStore from './store/Activities';
 import * as PerformanceStore from './store/Performance';
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import React from 'react';
+
+jest.mock('react-dom');
+import  ReactDOM from 'react-dom';
 
 import Activities from './components/Activities';
 import App from './App';
@@ -14,9 +16,9 @@ import renderer from 'react-test-renderer';
 describe('Renders component without crashing', () => {
     it('App renders without crashing', () => {
         const storeFake = (state: any) => ({
-            default: () => {},
-            subscribe: () => {},
-            dispatch: () => {},
+            default: () => { },
+            subscribe: () => { },
+            dispatch: () => { },
             getState: () => ({ ...state })
         });
 
@@ -26,7 +28,7 @@ describe('Renders component without crashing', () => {
         };
 
         const store = storeFake(state) as any;
-        
+
         const elem = document.createElement('div');
         elem.id = 'footerToolbar';
 
@@ -35,25 +37,25 @@ describe('Renders component without crashing', () => {
         ReactDOM.render(
             <Provider store={store}>
                 <MemoryRouter>
-                    <Activities/>
-                    <Performance/>
-                    <App/>
+                    <Activities />
+                    <Performance />
+                    <App />
                 </MemoryRouter>
             </Provider>, document.createElement('div'));
     });
 
 
     it('PeriodSelect renders without crashing', () => {
-    const div = document.createElement('div');
-    const from = new Date(1);
-    const to = new Date(4000);
+        const div = document.createElement('div');
+        const from = new Date(1);
+        const to = new Date(4000);
 
-    ReactDOM.render(<PeriodSelect
-        from = {from}
-        to = {to}
-        minYear = {from.getFullYear()}
-        maxYear = {to.getFullYear()}
-        onChange = {(from: Date, to: Date)=> ({from,to})}
+        ReactDOM.render(<PeriodSelect
+            from={from}
+            to={to}
+            minYear={from.getFullYear()}
+            maxYear={to.getFullYear()}
+            onChange={(from: Date, to: Date) => ({ from, to })}
         />, div);
     });
 })
@@ -61,18 +63,19 @@ describe('Renders component without crashing', () => {
 describe('Component snapshots', () => {
     beforeAll(() => {
         ReactDOM.createPortal = jest.fn((element, node) => {
-        return element;
-      })
+            return element;
+        })
     })
-  
+
     afterEach(() => {
         ReactDOM.createPortal.mockClear();
     })
+    
     it('App should render correctly with Node or Function', () => {
-       const storeFake = (state: any) => ({
-            default: () => {},
-            subscribe: () => {},
-            dispatch: () => {},
+        const storeFake = (state: any) => ({
+            default: () => { },
+            subscribe: () => { },
+            dispatch: () => { },
             getState: () => ({ ...state })
         });
 
@@ -84,11 +87,11 @@ describe('Component snapshots', () => {
 
         const component = renderer.create(<Provider store={store}>
             <MemoryRouter>
-                <Activities/>
+                <Activities />
             </MemoryRouter>
         </Provider>);
 
         let tree = component.toJSON();
         expect(tree).toMatchSnapshot();
     })
-  });
+});

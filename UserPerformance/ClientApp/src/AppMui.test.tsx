@@ -28,8 +28,7 @@ import ConfirmAlert from "./components/ConfirmAlert";
 import { MemoryRouter } from 'react-router-dom';
 import Performance from './components/Performance';
 import { Provider } from 'react-redux';
-import { configure } from "enzyme";
-import { createMount } from "@material-ui/core/test-utils";
+import { configure, mount } from "enzyme";
 
 configure({ adapter: new Adapter() });
 describe("Material UI tests", () => {
@@ -97,7 +96,7 @@ describe("Material UI tests", () => {
     });
     
     it("App should render ConfirmAlert correctly", () => {
-        const wrapper = createMount()(
+        const wrapper = mount(
             <ConfirmAlert
                 open={true}
                 title="Title"
@@ -116,7 +115,7 @@ describe("Material UI tests", () => {
 
         document.body.appendChild(elem);
         
-        const wrapper = createMount()(
+        const wrapper = mount(
             <AppAlert
                 messages = {[{   id: 1, severity: 'error', text: 'Test3 message',}]}
             />
@@ -144,7 +143,7 @@ describe("Material UI tests", () => {
 
         document.body.appendChild(elem);
 
-        const wrapper = createMount()(<Provider store={store}>
+        const wrapper = mount(<Provider store={store}>
             <MemoryRouter>
                     <Performance/>
             </MemoryRouter>
