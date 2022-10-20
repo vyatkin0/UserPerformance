@@ -143,11 +143,11 @@ namespace UnitTestProject
         [TestMethod]
         public void TestAddActivity()
         {
-            PerformanceController ñontroller = ConfigureController();
+            PerformanceController controller = ConfigureController();
 
             ActivityModel m = new ActivityModel { name = "TTT", description = "description of TTT", workCost = 20 };
 
-            IActionResult result = ñontroller.AddActivity(m);
+            IActionResult result = controller.AddActivity(m);
 
             Assert.IsTrue(result is OkObjectResult);
 
@@ -162,7 +162,7 @@ namespace UnitTestProject
             m = new ActivityModel { id = 0, name = "TTT2", description = "description of TTT", workCost = 30 };
 
             // Modification
-            result = ñontroller.AddActivity(m);
+            result = controller.AddActivity(m);
 
             Assert.IsTrue(result is OkObjectResult);
 
@@ -178,7 +178,7 @@ namespace UnitTestProject
             m = new ActivityModel { id = 1, name = "TTT2", description = "description of TTT", workCost = 20, options = 1 };
 
             // Modification
-            result = ñontroller.AddActivity(m);
+            result = controller.AddActivity(m);
 
             Assert.IsTrue(result is BadRequestObjectResult);
         }
@@ -187,11 +187,11 @@ namespace UnitTestProject
         [TestMethod]
         public void TestDeleteActivity()
         {
-            PerformanceController ñontroller = ConfigureController();
+            PerformanceController controller = ConfigureController();
 
             DeleteActivityModel m = new DeleteActivityModel { id = 1 };
 
-            IActionResult result = ñontroller.DeleteActivity(m);
+            IActionResult result = controller.DeleteActivity(m);
 
             Assert.IsTrue(result is OkObjectResult);
 
@@ -201,7 +201,7 @@ namespace UnitTestProject
 
             m = new DeleteActivityModel { id = 4 };
 
-            result = ñontroller.DeleteActivity(m);
+            result = controller.DeleteActivity(m);
 
             Assert.IsTrue(okResult.Value as string == "Success");
             //Assert.IsTrue(result is BadRequestObjectResult);
@@ -210,9 +210,9 @@ namespace UnitTestProject
         [TestMethod]
         public void TestActivities()
         {
-            PerformanceController ñontroller = ConfigureController();
+            PerformanceController controller = ConfigureController();
 
-            IActionResult result = ñontroller.Activities();
+            IActionResult result = controller.Activities();
 
             Assert.IsTrue(result is OkObjectResult);
 
@@ -235,10 +235,10 @@ namespace UnitTestProject
         [TestMethod]
         public void TestUserActivities()
         {
-            PerformanceController ñontroller = ConfigureController();
+            PerformanceController controller = ConfigureController();
 
             DateTime startDate = new DateTime(2020, 1, 1);
-            IActionResult result = ñontroller.UserActivities(startDate, new DateTime(2020, 1, 3), 0, 10);
+            IActionResult result = controller.UserActivities(startDate, new DateTime(2020, 1, 3), 0, 10);
 
             Assert.IsTrue(result is OkObjectResult);
 
@@ -261,20 +261,20 @@ namespace UnitTestProject
             Assert.AreEqual(ea.monthPerformance, 0);
             Assert.AreEqual(ea.monthWorkDays, 0);
 
-            result = ñontroller.UserActivities(new DateTime(2020, 1, 3), startDate, 0, 10);
+            result = controller.UserActivities(new DateTime(2020, 1, 3), startDate, 0, 10);
             Assert.IsInstanceOfType(result, typeof(BadRequestResult));
         }
 
         [TestMethod]
         public void TestSaveActivities()
         {
-            PerformanceController ñontroller = ConfigureController();
+            PerformanceController controller = ConfigureController();
             ActivitiesModel activities = new ActivitiesModel
             {
                 selected = new long[] { 1 }
             };
 
-            IActionResult result = ñontroller.SaveActivities(activities);
+            IActionResult result = controller.SaveActivities(activities);
 
             Assert.IsTrue(result is OkObjectResult);
 
@@ -286,7 +286,7 @@ namespace UnitTestProject
         [TestMethod]
         public void TestSaveUserActivities()
         {
-            PerformanceController ñontroller = ConfigureController();
+            PerformanceController controller = ConfigureController();
 
             SaveUserActivityModel[] userActivities = new SaveUserActivityModel[] {
                 new SaveUserActivityModel{
@@ -307,7 +307,7 @@ namespace UnitTestProject
                 },
             };
 
-            IActionResult result = ñontroller.SaveUserActivities(userActivities);
+            IActionResult result = controller.SaveUserActivities(userActivities);
 
             Assert.IsTrue(result is OkObjectResult);
 
