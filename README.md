@@ -1,7 +1,8 @@
 # UserPerformance
-Example of a web application that is based on asp.net mvc core 5.0 and React framework with @material-ui/core components.
+Example of an asp.net core mvc 5.0 web application with frontend based on React framework and @material-ui/core components.
 The solution also contains Electron JS desktop application that can be used as a frontend.
-MSSQL Server used as a data storage.
+
+It is available for playing by url https://user-performance-fcn7f4ebeq-uc.a.run.app/
 
 These are generic installation instructions.
 
