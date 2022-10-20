@@ -13,7 +13,7 @@ namespace UserPerformanceApp.Controllers
 {
     [ApiController]
     [Route("/api")]
-    [Authorize]
+    //[Authorize]
     public class PerformanceController : ControllerBase
     {
         private readonly AppDbContext _ctx;
@@ -26,7 +26,7 @@ namespace UserPerformanceApp.Controllers
         [HttpPost("[action]")]
         public IActionResult SaveActivities(ActivitiesModel model)
         {
-            Guid? userId = _ctx.Users.Where(u => u.Login == HttpContext.User.Identity.Name.ToUpper()).SingleOrDefault()?.Id;
+            Guid? userId = HttpContext.User.Identity.Name == null ? null : _ctx.Users.Where(u => u.Login == HttpContext.User.Identity.Name.ToUpper()).SingleOrDefault()?.Id;
 
             if (null == userId || !userId.HasValue)
             {
@@ -67,7 +67,7 @@ namespace UserPerformanceApp.Controllers
         [HttpGet("[action]")]
         public IActionResult Activities()
         {
-            Guid? userId = _ctx.Users.Where(u => u.Login == HttpContext.User.Identity.Name.ToUpper()).SingleOrDefault()?.Id;
+            Guid? userId = HttpContext.User.Identity.Name == null ? null : _ctx.Users.Where(u => u.Login == HttpContext.User.Identity.Name.ToUpper()).SingleOrDefault()?.Id;
 
             if (null == userId || !userId.HasValue)
             {
@@ -106,7 +106,7 @@ namespace UserPerformanceApp.Controllers
 
             try
             {
-                Guid? userId = _ctx.Users.Where(u => u.Login == HttpContext.User.Identity.Name.ToUpper()).SingleOrDefault()?.Id;
+                Guid? userId = HttpContext.User.Identity.Name == null ? null : _ctx.Users.Where(u => u.Login == HttpContext.User.Identity.Name.ToUpper()).SingleOrDefault()?.Id;
 
                 if (null == userId || !userId.HasValue)
                 {
@@ -191,7 +191,7 @@ namespace UserPerformanceApp.Controllers
 
             try
             {
-                Guid? userId = _ctx.Users.Where(u => u.Login == HttpContext.User.Identity.Name.ToUpper()).SingleOrDefault()?.Id;
+                Guid? userId = HttpContext.User.Identity.Name == null ? null : _ctx.Users.Where(u => u.Login == HttpContext.User.Identity.Name.ToUpper()).SingleOrDefault()?.Id;
 
                 if (null == userId || !userId.HasValue)
                 {
@@ -238,11 +238,12 @@ namespace UserPerformanceApp.Controllers
             if (to < from) ModelState.AddModelError("", "Date to must be greater or equals than date from");
             if (!ModelState.IsValid) return BadRequest();
 
-            AppUser user = _ctx.Users.Where(u => u.Login == HttpContext.User.Identity.Name.ToUpper()).SingleOrDefault();
+            AppUser user = HttpContext.User.Identity.Name==null ? null : _ctx.Users.Where(u => u.Login == HttpContext.User.Identity.Name.ToUpper()).SingleOrDefault();
 
             if (null == user)
             {
-                user = new AppUser { Id = Guid.Empty, Name = $"Not authorized application user ({HttpContext.User.Identity.Name})", Login = HttpContext.User.Identity.Name };
+                string userName = HttpContext.User.Identity.Name == null ? "Not authorized application user" : $"Not authorized application user({ HttpContext.User.Identity.Name})";
+                user = new AppUser { Id = Guid.Empty, Name = userName, Login = HttpContext.User.Identity.Name };
                 //return BadRequest("User is not authorized");
             }
 
@@ -499,7 +500,7 @@ namespace UserPerformanceApp.Controllers
 
             try
             {
-                Guid? userId = _ctx.Users.Where(u => u.Login == HttpContext.User.Identity.Name.ToUpper()).SingleOrDefault()?.Id;
+                Guid? userId = HttpContext.User.Identity.Name == null ? null : _ctx.Users.Where(u => u.Login == HttpContext.User.Identity.Name.ToUpper()).SingleOrDefault()?.Id;
 
                 if (null == userId || !userId.HasValue)
                 {

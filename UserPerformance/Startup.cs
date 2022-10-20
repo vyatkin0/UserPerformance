@@ -54,10 +54,10 @@ namespace EmployeePerformance
             }
             */
 
-            services.AddAuthentication(NegotiateDefaults.AuthenticationScheme)
-                .AddNegotiate();
+            //services.AddAuthentication(NegotiateDefaults.AuthenticationScheme)
+            //    .AddNegotiate();
 
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            //services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
             /*
             services.AddDbContext<AppDbContext>(options =>
@@ -68,10 +68,10 @@ namespace EmployeePerformance
 
             services.AddScoped(provider => new AppDbContext(Configuration));
 
-            services.Configure<IISServerOptions>(options =>
-            {
-                options.AutomaticAuthentication = false;
-            });
+            //services.Configure<IISServerOptions>(options =>
+            //{
+            //    options.AutomaticAuthentication = false;
+            //});
 
             services.AddControllersWithViews();
 
@@ -102,9 +102,9 @@ namespace EmployeePerformance
 
             app.UseRouting();
 
-            app.UseAuthentication();
+            //app.UseAuthentication();
 
-            app.UseAuthorization();
+            //app.UseAuthorization();
 
             if (IsDevEnv())
             {
